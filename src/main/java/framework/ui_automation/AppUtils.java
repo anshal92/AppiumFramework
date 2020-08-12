@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 public class AppUtils {
-    //ToDo: Revise
+    //ToDo: Optimize
     public void tap(By by, AppiumDriver<MobileElement> driver){
         MobileElement element = null;
 

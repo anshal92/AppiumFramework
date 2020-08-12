@@ -38,6 +38,7 @@ public class UserTest extends LoginDp {
 
     @Test()
     void getTokenTest() {
+        System.out.println("------------------- Test Started for getToken --------------------");
         String pathToHit = "/get_token";
 
         Response response = loginApiHelper.getUserToken(baseUri, "", pathToHit);
@@ -45,10 +46,12 @@ public class UserTest extends LoginDp {
         /** Assertion */
         Assert.assertEquals(response.getStatusCode(), 200);
         Assert.assertEquals(response.jsonPath().getString("token"), "harshit");
+        System.out.println("XXXXXXXXXXXXXXXXXXXXXX Test Completed for getToken XXXXXXXXXXXXXXXXXXXXXX");
     }
 
     @Test(dataProvider = "postCreateUserData")
     void postUserLoginData(CreateUserDataScenario scenario, String data) {
+        System.out.println("------------------- Test Started for " +scenario.toString()+ "--------------------");
         String pathToHit = "/user";
 
         String toSendPL = "{\n" +
@@ -56,8 +59,25 @@ public class UserTest extends LoginDp {
                 "    \"email\": \"hitesh.28jan@gmail.com\"\n" +
                 "}\n";
 
-        wireMockServer.stubFor(post(urlEqualTo(pathToHit)).withRequestBody(equalToJson(toSendPL)).willReturn(aResponse()
-                .withStatus(201).withHeader("Content-Type", "application/json").withBody(stubPayLoad)));
+        switch (scenario){
+            case PROPERDATA:
+                wireMockServer.stubFor(post(urlEqualTo(pathToHit)).withRequestBody(equalToJson(toSendPL)).willReturn(aResponse()
+                        .withStatus(201).withHeader("Content-Type", "application/json").withBody(stubPayLoad)));
+                break;
+            case INVALIDPAYLOAD:
+                wireMockServer.stubFor(post(urlEqualTo(pathToHit)).willReturn(aResponse()
+                        .withStatus(400)));
+                break;
+            case INVALIDHEADERFORCREATEDATA:
+                wireMockServer.stubFor(post(urlEqualTo(pathToHit)).willReturn(aResponse()
+                        .withStatus(401)));
+                break;
+            case STALEDATA:
+                wireMockServer.stubFor(post(urlEqualTo(pathToHit)).willReturn(aResponse()
+                        .withStatus(409)));
+                break;
+
+        }
 
         Response getTokenResponse = loginApiHelper.getUserToken(baseUri, "", "/get_token");
         String token = getTokenResponse.jsonPath().getString("token");
@@ -97,17 +117,29 @@ public class UserTest extends LoginDp {
                 Assert.assertEquals(createUserResponse.getStatusCode(), 409);
                 break;
         }
+        System.out.println("XXXXXXXXXXXXXXXXXXXXXX Test Completed for " + scenario.toString()+ " XXXXXXXXXXXXXXXXXXXXXX");
     }
 
     @Test(dataProvider = "getCreatedUserData")
     void getUserData(GetUserDataScenario scenario, String data) {
+        System.out.println("------------------- Test Started for " +scenario.toString()+ "--------------------");
         String pathToHit = "/user";
+
         //Stub
         wireMockServer.stubFor(get(urlEqualTo("/get_token")).willReturn(aResponse()
                 .withStatus(200).withHeader("Content-Type", "application/json").withBody("{\"token\":\"harshit\"}")));
-        wireMockServer.stubFor(get(urlEqualTo(pathToHit)).withHeader("Authorization", containing("Bearer")).willReturn(aResponse()
-                .withStatus(200).withHeader("Content-Type", "application/json").withBody(stubPayLoad)));
 
+
+        switch (scenario){
+            case VALIDHEADER:
+                wireMockServer.stubFor(get(urlEqualTo(pathToHit)).withHeader("Authorization", containing("Bearer")).willReturn(aResponse()
+                        .withStatus(200).withHeader("Content-Type", "application/json").withBody(stubPayLoad)));
+                break;
+            case INVALIDHEADER:
+                wireMockServer.stubFor(get(urlEqualTo(pathToHit)).willReturn(aResponse()
+                        .withStatus(401)));
+                break;
+        }
 
         Response userTokenResponse = loginApiHelper.getUserToken(baseUri, "", "/get_token");
         String tokenName = userTokenResponse.jsonPath().getString("token");
@@ -137,10 +169,12 @@ public class UserTest extends LoginDp {
                 softAssert.assertAll();
                 break;
         }
+        System.out.println("XXXXXXXXXXXXXXXXXXXXXX Test Completed for " + scenario.toString()+ " XXXXXXXXXXXXXXXXXXXXXX");
     }
 
     @Test(dataProvider = "getUserDataByName")
     void getUserDataByName(GetUserDataByNameScenario scenario, String data) {
+        System.out.println("------------------- Test Started for " +scenario.toString()+ "--------------------");
         String pathToHit = "/user/";
         String userToCheck = "hitesh";
         switch (scenario) {
@@ -173,5 +207,6 @@ public class UserTest extends LoginDp {
                 Assert.assertEquals(resp.getStatusCode(), 404);
                 break;
         }
+        System.out.println("XXXXXXXXXXXXXXXXXXXXXX Test Completed for " + scenario.toString()+ " XXXXXXXXXXXXXXXXXXXXXX");
     }
 }

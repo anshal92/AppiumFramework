@@ -27,8 +27,6 @@ public class BestInSafetyAndListingActivity {
         //Using first restaurant
         AppUtils appUtils = new AppUtils();
         appUtils.clickIfVisible(bisIcon.get(0), driver);
-//        boolean isVisible = appUtils.isVisible(bisIcon.get(0), driver);
-//        if(isVisible) bisIcon.get(0).click();
         return new MenuActivity(driver);
     }
 }

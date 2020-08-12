@@ -16,6 +16,8 @@ public class AddressPage {
     public HomePage clickMyLocation(){
         AppUtils appUtils = new AppUtils();
         try{
+            //ToDo: Optimize
+            //Using sleep to out of staleElement exception
             Thread.sleep(2000);
         }catch (Exception e){
             System.out.println("Exception is -> " +e.fillInStackTrace());
