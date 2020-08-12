@@ -1,5 +1,6 @@
 package test.ui_test.test;
 
+import framework.GetAppiumData;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -9,6 +10,7 @@ import org.testng.annotations.Test;
 import test.ui_test.activities.HomePage;
 
 import java.net.URL;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class AppiumTestFirst {
@@ -18,13 +20,16 @@ public class AppiumTestFirst {
     @BeforeClass
     public void setUp() throws Exception{
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        desiredCapabilities.setCapability("deviceName","Death");
-        desiredCapabilities.setCapability("udid","8BFX19V70");
-        desiredCapabilities.setCapability("platformName", "Android");
-        desiredCapabilities.setCapability("platformVersion", "10.0");
-        desiredCapabilities.setCapability("appPackage", "in.swiggy.android");
-        desiredCapabilities.setCapability("appActivity", "in.swiggy.android.activities.HomeActivity");
-        desiredCapabilities.setCapability("noReset", "true");
+        GetAppiumData gad = new GetAppiumData();
+        Properties props = gad.getProperties();
+
+        desiredCapabilities.setCapability("deviceName",props.getProperty("app.deviceName"));
+        desiredCapabilities.setCapability("udid",props.getProperty("app.udid"));
+        desiredCapabilities.setCapability("platformName", props.getProperty("app.platformName"));
+        desiredCapabilities.setCapability("platformVersion", props.getProperty("app.platformVersion"));
+        desiredCapabilities.setCapability("appPackage", props.getProperty("app.appPackage"));
+        desiredCapabilities.setCapability("appActivity", props.getProperty("app.appActivity"));
+        desiredCapabilities.setCapability("noReset", props.getProperty("app.noReset"));
 
         driver = new AppiumDriver<MobileElement>(new URL("http://0.0.0.0:4723/wd/hub"), desiredCapabilities);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);

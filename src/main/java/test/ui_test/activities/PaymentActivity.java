@@ -9,10 +9,15 @@ public class PaymentActivity {
     public PaymentActivity(AppiumDriver<MobileElement> driver){
         this.driver = driver;
     }
-    private final By amazonPaylink = By.xpath("//android.view.ViewGroup[@content-desc = 'AmazonPay']");
-    private final By payUsingAmazonBtn = By.xpath("//android.view.ViewGroup[@content-desc = 'Pay using AmazonPay']");
+    private final By amazonPaylink = By.xpath("//android.view.ViewGroup[@content-desc = 'PhonePe']");
+    private final By payUsingAmazonBtn = By.xpath("//android.view.ViewGroup[@content-desc = 'Pay using PhonePe']");
 
     public PaymentActivity tapOnAmazonPayLink(){
+        try{
+            Thread.sleep(1300);
+        } catch (Exception e){
+            System.out.println(e);
+        }
         driver.findElement(amazonPaylink).click();
         return new PaymentActivity(driver);
     }
